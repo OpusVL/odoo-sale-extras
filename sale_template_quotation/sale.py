@@ -32,7 +32,7 @@ class TemplateQuotation(models.Model):
     @api.one
     def convert_to_template(self):
         if not (self.quotation_ref and self.quotation_ref.strip()):
-            raise exceptions.Warning('Quotation Ref is blank.\nYou must set a Quotation Ref before you convert the quotation to a template')
+            raise exceptions.Warning('Quotation Ref is blank.\nYou must set a Quotation Ref before you convert the quotation to a template.')
         self.is_template = True
 
 
