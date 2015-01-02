@@ -18,7 +18,6 @@
                             states="draft"
                             string="Convert to Template"
                             attrs="{'invisible': [('is_template', '=', True)]}"
-                            confirm="Once converted to a template, this quotation will not be able to be edited or converted to a sales order."
                     />
                 </field>
                 <xpath expr="//h1" position="after">
