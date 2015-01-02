@@ -32,5 +32,38 @@
             </field>
         </record>
 
+
+
+        <record id="view_sales_order_filter" model="ir.ui.view">
+            <field name="name">sale.order.list.select.inherit_template_quotation</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+            <field name="arch" type="xml">
+                <field name="product_id" position="after">
+                    <field name="quotation_ref"/>
+                </field>
+                <filter name="message_unread" position="after">
+                    <separator/>
+                    <filter name="template" string="Templates" domain="[('is_template', '=', True)]"/>
+                    <filter name="not_template" string="Non-templates" domain="[('is_template', '=', False)]"/>
+                </filter>
+            </field>
+        </record>
+
+    
+
+        <record id="view_quotation_tree" model="ir.ui.view">
+            <field name="name">sale.order.quote.tree.inherit_template_quotation</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_quotation_tree"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="quotation_ref"/>
+                </field>
+                <field name="state" position="after">
+                    <field name="is_template" string="Template?"/>
+                </field>
+            </field>
+        </record>
     </data>
 </openerp>
