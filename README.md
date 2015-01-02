@@ -13,6 +13,11 @@ order.
 A new Quotation Reference field is also created which must be filled in
 before conversion to a template.
 
+# sale\_list\_client\_order\_ref
+
+Display the client order reference (Reference/Description) field in sales order
+and quotation list views, and allow searching on that field.
+
 
 # Copyright and License
 
