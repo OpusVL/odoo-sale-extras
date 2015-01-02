@@ -30,7 +30,14 @@
     
     'category': 'Sales',
     
-    'description': """Allow quotations to be frozen for use as templates,
+    'description': """Allow quotations to be frozen for use as templates.
+
+A new button is added to the Quotation screen, "Convert to Template", which
+freezes the quotation preventing it from being edited or converted to a sales
+order.
+
+A new Quotation Reference field is also created which must be filled in
+before conversion to a template.
 """,
     'images': [
     ],
