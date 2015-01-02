@@ -3,7 +3,6 @@ odoo-sale-extras
 
 # sale\_template\_quotation
 
-
 Allow quotations to be frozen for use as templates.
 
 A new button is added to the Quotation screen, "Convert to Template", which
@@ -12,6 +11,7 @@ order.
 
 A new Quotation Reference field is also created which must be filled in
 before conversion to a template.
+
 
 # sale\_list\_client\_order\_ref
 
