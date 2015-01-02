@@ -1,7 +1,7 @@
-odoo-template-quotations
-========================
+odoo-sale-extras
+================
 
-# sale_template_quotation
+# sale\_template\_quotation
 
 
 Allow quotations to be frozen for use as templates.
