@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+
+        <record id="view_order_form" model="ir.ui.view">
+            <field name="name">sale.order.form.inherit_template_quotation</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <field name="project_id" position="after">
+                    <field name="quotation_ref"/>
+                </field>
+                <field name="state" position="before">
+                    <button name="convert_to_template"
+                            type="object"
+                            states="draft"
+                            string="Convert to Template"
+                    />
+                </field>
+                <!--
+                <xpath expr="TODO" position="after">
+                </xpath>
+                -->
+            </field>
+        </record>
+
+    </data>
+</openerp>

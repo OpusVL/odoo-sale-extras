@@ -42,8 +42,10 @@ before conversion to a template.
     'images': [
     ],
     'depends': [
+        'sale',
     ],
     'data': [
+        'sale_view.xml',
     ],
     'demo': [
     ],
