@@ -20,7 +20,12 @@
 #
 ##############################################################################
 
+from openerp import models, fields, api
 
-from . import sale
+class TemplateQuotation(models.Model):
+    _inherit = "sale.order"
+
+    is_template = fields.Bool(default=False)
+    quotation_ref = fields.Char()
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
