@@ -10,18 +10,26 @@
             <field name="arch" type="xml">
                 <field name="project_id" position="after">
                     <field name="quotation_ref"/>
+                    <field name="is_template" invisible="True"/>
                 </field>
                 <field name="state" position="before">
                     <button name="convert_to_template"
                             type="object"
                             states="draft"
                             string="Convert to Template"
+                            attrs="{'invisible': [('is_template', '=', True)]}"
+                            confirm="Once converted to a template, this quotation will not be able to be edited or converted to a sales order."
                     />
                 </field>
-                <!--
-                <xpath expr="TODO" position="after">
+                <xpath expr="//h1" position="after">
+                    <p  class="bg-danger"
+                        attrs="{'invisible': [('is_template', '=', False)]}">
+                            This is a template.
+                            You will not be able to edit this template or turn it into a sales order.
+                            <br />
+                            You may create a new quotation based on this with More -> Duplicate.
+                    </p>
                 </xpath>
-                -->
             </field>
         </record>
 

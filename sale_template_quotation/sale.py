@@ -20,12 +20,28 @@
 #
 ##############################################################################
 
-from openerp import models, fields, api
+from openerp import models, fields, api, exceptions
 
 class TemplateQuotation(models.Model):
     _inherit = "sale.order"
 
     is_template = fields.Boolean(default=False)
     quotation_ref = fields.Char()
+
+    @api.one
+    def convert_to_template(self):
+        self.is_template = True
+
+
+    #@api.one
+    #def write(self, data):
+    #    if self.is_template and ('state' not in data or data['state'] != 'cancelled'):
+    #        raise exceptions.Warning('You cannot edit or change state of a quotation template')
+    #    return super(TemplateQuotation, self).write(self, data)
+
+    @api.one
+    def copy(self, default=None):
+        new_default = default or {'is_template': False}
+        return super(TemplateQuotation, self).copy(default=new_default)
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
