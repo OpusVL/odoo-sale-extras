@@ -28,6 +28,7 @@ class TemplateQuotation(models.Model):
     is_template = fields.Boolean(default=False)
     quotation_ref = fields.Char()
 
+
     @api.one
     def convert_to_template(self):
         self.is_template = True
@@ -38,6 +39,7 @@ class TemplateQuotation(models.Model):
         if self.is_template and ('state' not in data or data['state'] != 'cancelled'):
             raise exceptions.Warning('You cannot edit or change state of a quotation template')
         return super(TemplateQuotation, self).write(data)
+
 
     @api.one
     def copy(self, default=None):
