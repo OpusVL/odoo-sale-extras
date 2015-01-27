@@ -39,10 +39,10 @@ class TemplateQuotation(models.Model):
 
 
     @api.one
-    def write(self, data):
+    def write(self, data, *args, **kwargs):
         if self.is_template and ('state' not in data or data['state'] != 'cancelled'):
             raise exceptions.Warning('You cannot edit or change state of a quotation template')
-        return super(TemplateQuotation, self).write(data)
+        return super(TemplateQuotation, self).write(data, *args, **kwargs)
 
 
     @api.one
