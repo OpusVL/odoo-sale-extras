@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="report_saleorder_document" inherit_id="sale.report_saleorder_document">
+            <xpath expr="//th[text()='Description']" position="before">
+                <th name="table_code_no_header">Code No</th>
+            </xpath>
+            <xpath expr="//span[@t-field='l.name']/parent::td" position="before">
+                <td name="table_code_no_td" style="white-space: nowrap;">
+                    <span name="table_code_no_row" t-field="l.product_sku"/>
+                </td>
+            </xpath>
+            <xpath expr="//span[@t-field='l.name']" position="attributes">
+                <attribute name="t-field">l.description_without_sku</attribute>
+            </xpath>
+        </template>
+    </data>
+</openerp>
