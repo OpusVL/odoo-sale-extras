@@ -20,7 +20,7 @@ and quotation list views, and allow searching on that field.
 
 # sale\_printout\_split\_sku
 
-Install this to print the product SKU in a separate column on the left of Description,
+Install this to print the product SKU in a separate `Code No` column on the left of Description,
 instead of the usual format of `[SKU] Description`
 
 
