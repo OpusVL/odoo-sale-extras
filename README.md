@@ -18,6 +18,11 @@ before conversion to a template.
 Display the client order reference (Reference/Description) field in sales order
 and quotation list views, and allow searching on that field.
 
+# sale\_printout\_split\_sku
+
+Install this to print the product SKU in a separate column on the left of Description,
+instead of the usual format of `[SKU] Description`
+
 
 # Copyright and License
 
