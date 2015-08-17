@@ -31,7 +31,7 @@ class SaleOrderLine(models.Model):
     )
 
     product_sku = fields.Char(
-        related=['product_tmpl_id', 'default_code'],
+        related=['product_id', 'default_code'],
         readonly=True,
     )
 
