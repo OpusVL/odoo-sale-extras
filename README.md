@@ -23,10 +23,25 @@ and quotation list views, and allow searching on that field.
 Install this to print the product SKU in a separate `Code No` column on the left of Description,
 instead of the usual format of `[SKU] Description`
 
+This works very well with Odoo 8.0's stock sale order/quotation printout templates,
+but if you customise the base template then your mileage may vary with this,
+and you may wish to use the module `sale_order_split_sku_fields` instead and specify
+the columns as you wish in your custom template.
+
+# sale\_order\_split\_sku\_fields
+
+This provides the fields on the `sale.order` model used by `sale_printout_split_sku`,
+also allowing you to use those separated fields with your own custom sale order report
+templates.
+
+Provides the following fields on the `sale.order` model:
+
+* `product_sku`
+* `description_without_sku`
 
 # Copyright and License
 
-Copyright (C) 2015 OpusVL
+Copyright (C) 2016 OpusVL
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as
