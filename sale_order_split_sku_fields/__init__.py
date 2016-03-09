@@ -20,36 +20,6 @@
 #
 ##############################################################################
 
-
-{
-    'name': 'Split SKU from Description on Sale Order printout',
-    'version': '0.1',
-    'author': 'OpusVL',
-    'website': 'http://opusvl.com/',
-    'summary': 'Split SKU from Description on Sale Order printout',
-    
-    'category': 'Sales',
-    
-    'description': """Split SKU from Description on Sale Order printout.
-""",
-    'images': [
-    ],
-    'depends': [
-        'sale',
-        'base',
-        'sale_order_split_sku_fields',
-    ],
-    'data': [
-        'reports/sale_order.xml',
-    ],
-    'demo': [
-    ],
-    'test': [
-    ],
-    'license': 'AGPL-3',
-    'installable': True,
-    'auto_install': False,
-
-}
+from . import sale_order
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

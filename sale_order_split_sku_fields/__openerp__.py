@@ -22,25 +22,23 @@
 
 
 {
-    'name': 'Split SKU from Description on Sale Order printout',
+    'name': 'Sale Order Split SKU Fields',
     'version': '0.1',
     'author': 'OpusVL',
     'website': 'http://opusvl.com/',
-    'summary': 'Split SKU from Description on Sale Order printout',
+    'summary': 'Provide split sku and product fields on Sale Order object',
     
     'category': 'Sales',
     
-    'description': """Split SKU from Description on Sale Order printout.
+    'description': """Provides two new fields on sale.order: description_without_sku and product_sku
+
+Intended for use with other modules, such as sale_printout_split_sku.
 """,
     'images': [
     ],
     'depends': [
         'sale',
         'base',
-        'sale_order_split_sku_fields',
-    ],
-    'data': [
-        'reports/sale_order.xml',
     ],
     'demo': [
     ],
