@@ -37,12 +37,18 @@ class SaleOrderLine(models.Model):
         compute='_compute_subtotal_taxes',
     )
 
+    tax_on_subtotal = fields.Float(
+        digits_compute=dp.get_precision('Product Price'),
+        compute='_compute_subtotal_taxes',
+    )
+
     @api.one
     @api.depends('tax_id', 'price_subtotal')
     def _compute_subtotal_taxes(self):
         taxes = self.order_id._amount_line_tax(self)
         self.subtotal_taxed = taxes['total_included']
         self.subtotal_untaxed = taxes['total']
+        self.tax_on_subtotal = self.subtotal_taxed - self.subtotal_untaxed
 
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
