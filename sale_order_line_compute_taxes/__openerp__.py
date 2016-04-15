@@ -30,7 +30,15 @@
     
     'category': 'Technical',
     
-    'description': """Compute taxes on sale order line,
+    'description': """Compute taxes on sale order line.
+
+    Adds tax_on_subtotal, subtotal_untaxed and subtotal_taxed to sale.order.line
+
+    This is a technical module for use by other modules and through the API.
+
+    Addition to reports and views should be done in a different module
+    that depends on this one.
+
 """,
     'images': [
     ],
