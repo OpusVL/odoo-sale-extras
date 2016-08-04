@@ -29,7 +29,7 @@
     'summary': 'Fix for decimal places on sale stock warnings',
     
     'description': """Changes the stock warnings that are shown when adding
-a sale order line, so that they show the number of decimal placed defined in the
+a sale order line, so that they show the number of decimal places defined in the
 Unit of Measure.  For example if the chosen Unit of Measure has an accuracy of
 0.00100, then the quantities in the warnings will be shown to 3 decimal places.
 
