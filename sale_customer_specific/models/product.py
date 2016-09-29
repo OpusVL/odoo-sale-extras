@@ -24,10 +24,10 @@ from openerp import models, fields, api
 
 
 class CustomerSpecificCommonMixin(object):
-    @api.one
     def may_be_sold_to_customer(self, customer):
         """Return whether this product should be sold to the given customer.
         """
+        self.ensure_one()
         if not self.is_customer_specific:
             return False
         if isinstance(customer, (int, long)):
