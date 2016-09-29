@@ -39,6 +39,13 @@ Provides the following fields on the `sale.order` model:
 * `product_sku`
 * `description_without_sku`
 
+# sale\_customer\_specific
+
+Customer-specific products.
+
+Adds to the Product form's Sale tab a tickbox 'Is customer specific', which if ticked will only allow
+the product to be added to sale orders for specific customers, listed in the 'Allowed customers' field.
+
 # Copyright and License
 
 Copyright (C) 2016 OpusVL
