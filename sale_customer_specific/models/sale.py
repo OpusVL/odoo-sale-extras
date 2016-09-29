@@ -48,7 +48,7 @@ class SaleOrderLine(models.Model):
         if not (product and partner):
             return
         if not product.may_be_sold_to_customer(partner):
-            raise exceptions.ValidationError(_("Product {prod_name} can't be sold to customer {cust_name}")).format(
+            raise exceptions.ValidationError(_("Product {prod_name} can't be sold to customer {cust_name}").format(
                 prod_name=product.display_name,
                 cust_name=partner.display_name,
             ))
