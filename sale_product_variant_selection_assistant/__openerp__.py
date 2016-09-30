@@ -39,6 +39,7 @@
         'product',
     ],
     'data': [
+        'views/sale.xml',
     ],
     'demo': [
     ],

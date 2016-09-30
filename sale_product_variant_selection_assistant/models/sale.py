@@ -44,6 +44,15 @@ class SaleOrderLine(models.Model):
     def _assistant_attributes(self):
         return self.variant_assistant_product_template_id.attribute_line_ids.mapped('attribute_id')
 
+    @api.onchange('variant_assistant_product_template_id')
+    def _onchange_product_template_id(self):
+        changes = [(2, i, False) for i in self.variant_assistant_attribute_choice_ids.ids]
+        attrs = self._assistant_attributes()
+        if attrs:
+             changes.extend((0, False, {"attribute_id": i}) for i in attrs.ids)
+        self.update({'variant_assistant_attribute_choice_ids': changes})
+
+
 
 class SaleOrderLineAssistantAttributeChoice(models.Model):
     _name = 'sale.order.line.assistant.attribute.choice'
@@ -54,7 +63,6 @@ class SaleOrderLineAssistantAttributeChoice(models.Model):
     )
     product_template_id = fields.Many2one(
         string='Product Template',
-        invisible=True,
         readonly=True,
         related='sale_order_line_id.variant_assistant_product_template_id',
     )
@@ -66,6 +74,7 @@ class SaleOrderLineAssistantAttributeChoice(models.Model):
     value_id = fields.Many2one(
         string='Value',
         comodel_name='product.attribute.value',
+        domain="[('attribute_id', '=', attribute_id), ('id', 'in', product_template_id.attribute_line_ids.value_ids)]",
     )
 
     @api.one
@@ -77,6 +86,7 @@ class SaleOrderLineAssistantAttributeChoice(models.Model):
             raise ValidationError('Value must match attribute')
         if self.value_id not in self.product_template_id.attribute_line_ids.mapped('value_ids'):
             raise ValidationError("Value must match product")
+
 
 
 
