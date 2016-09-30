@@ -105,4 +105,27 @@ class ValidationTests(common.TransactionCase):
                 ))],
             ))
 
+    def test_assistant_is_optional(self):
+        """It is still OK to create an order line without filling in the assistant fields.
+        """
+        self.orders['FIRST'].write(dict(
+            order_line=[(0, False, dict(product_id=self.products['table'].product_variant_ids[0].id))],
+        ))
+
+    def test_table_with_pedestal_legs(self):
+        """It is OK to choose mature cheese.
+        """
+        table = self.products['table']
+        legs = self.attributes['legs']
+        pedestal = self.attr_values['legs']['Pedestal']
+        self.orders['FIRST'].write(dict(
+            order_line=[(0, False, dict(
+                name='NOT NULL',   # This won't matter while we're doing the onupdate
+                variant_assistant_product_template_id=table.id,
+                variant_assistant_attribute_choice_ids=[
+                    (0, False, dict(attribute_id=legs.id, value_id=pedestal.id)),
+                ],
+            ))],
+        ))
+
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
