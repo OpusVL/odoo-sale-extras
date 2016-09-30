@@ -23,14 +23,9 @@
 from openerp.tests import common
 from openerp.exceptions import ValidationError
 
-class ValidationTests(common.TransactionCase):
-    """Test validation of models.
-    """
-    at_install = False
-    post_install = True
-
+class AssistantTestCommon(common.TransactionCase):
     def setUp(self):
-        super(ValidationTests, self).setUp()
+        super(AssistantTestCommon, self).setUp()
         Partner = self.env['res.partner']
         ProductTemplate = self.env['product.template']
         ProductProduct = self.env['product.product']
@@ -66,7 +61,6 @@ class ValidationTests(common.TransactionCase):
         self.orders['FIRST'] = SaleOrder.create(dict(
             partner_id = self.partners['acme'].id,
         ))
-        #import pdb ; pdb.set_trace()
 
     def setup_add_attribute(self, name, value_names):
         ProductAttribute = self.env['product.attribute']
@@ -75,6 +69,12 @@ class ValidationTests(common.TransactionCase):
         self.attr_values[name] = values = {}
         for val in value_names:
             values[val] = ProductAttributeValue.create(dict(name=val, attribute_id=attr.id))
+
+class ValidationTests(AssistantTestCommon):
+    """Test validation of variant choice assistant models.
+    """
+    at_install = False
+    post_install = True
 
     def test_cheese_with_legs_option(self):
         with self.assertRaisesRegexp(ValidationError, r"Attribute must match product template"):
