@@ -33,7 +33,7 @@ class SaleOrderLine(models.Model):
 
     variant_assistant_attribute_choice_ids = fields.One2many(
         comodel_name='sale.order.line.assistant.attribute.choice',
-        foreign_field='sale_order_line_id',
+        inverse_name='sale_order_line_id',
         string='Choose attributes',
         invisible=[('variant_assistant_attribute_choice_ids', '=', False)],
         help='Now select the attribute values.  Once you select enough attributes to uniquely identify the product, it will be entered in the Product field',
