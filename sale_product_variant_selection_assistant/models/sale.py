@@ -40,6 +40,11 @@ class SaleOrderLine(models.Model):
         help='Now select the attribute values.  Once you select enough attributes to uniquely identify the product, it will be entered in the Product field',
     )
 
+    @api.returns('product.attribute')
+    def _assistant_attributes(self):
+        return self.variant_assistant_product_template_id.attribute_line_ids.mapped('attribute_id')
+
+
 class SaleOrderLineAssistantAttributeChoice(models.Model):
     _name = 'sale.order.line.assistant.attribute.choice'
 

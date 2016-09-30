@@ -23,6 +23,8 @@
 from openerp.tests import common
 from openerp.exceptions import ValidationError
 
+
+
 class AssistantTestCommon(common.TransactionCase):
     def setUp(self):
         super(AssistantTestCommon, self).setUp()
@@ -44,6 +46,7 @@ class AssistantTestCommon(common.TransactionCase):
         ))
         self.setup_add_attribute('legs', ['Pedestal', 'Four Straight', 'Three Straight'])
         self.setup_add_attribute('maturity', ['Mild', 'Medium', 'Mature', 'Extra Mature'])
+        self.setup_add_attribute('wood', ['Mahogany', 'Teak', 'MDF', 'Balsa', 'Oak'])
         self.products['table'] = ProductTemplate.create(dict(
             name='TEST Table',
             attribute_line_ids=[
@@ -51,6 +54,12 @@ class AssistantTestCommon(common.TransactionCase):
                     attribute_id=self.attributes['legs'].id,
                     value_ids=[
                         (6, False, [v.id for v in self.attr_values['legs'].values()]),
+                    ],
+                )),
+                (0, False, dict(
+                    attribute_id=self.attributes['wood'].id,
+                    value_ids=[
+                        (6, False, [self.attr_values['wood'][n].id for n in ['Mahogany', 'Teak']]),
                     ],
                 )),
             ],
@@ -77,6 +86,70 @@ class AssistantTestCommon(common.TransactionCase):
         self.attr_values[name] = values = {}
         for val in value_names:
             values[val] = ProductAttributeValue.create(dict(name=val, attribute_id=attr.id))
+
+
+
+
+class AvailableAttributesTests(AssistantTestCommon):
+    """Test the available attributes methohd: _assistant_attributes()
+    """
+    at_install = False
+    post_install = True
+
+    def test_assistant_clear_by_default(self):
+        order = self.orders['FIRST']
+        
+        line = self.env['sale.order.line'].create(dict(
+            order_id=order.id,
+            name='NOT NULL',
+        ))
+
+        self.assertFalse(line.variant_assistant_product_template_id)
+        self.assertFalse(line.variant_assistant_attribute_choice_ids)
+
+        
+    def test_cheese_attributes(self):
+        """_assistant_attributes() yields correct attributes for cheese
+        """
+        line = self.env['sale.order.line'].create(dict(
+            order_id=self.orders['FIRST'].id,
+            name='NOT NULL',
+            variant_assistant_product_template_id=self.products['cheese'].id,
+        ))
+
+        result = line._assistant_attributes()
+
+        self.assertSetEqual(frozenset(result.mapped('name')), frozenset(['TEST maturity']),
+                            "Maturity is the only valid attribute of Cheese")
+
+        
+    def test_table_attributes(self):
+        """_assistant_attributes() yields correct attributes for table
+        """
+        line = self.env['sale.order.line'].create(dict(
+            order_id=self.orders['FIRST'].id,
+            name='NOT NULL',
+            variant_assistant_product_template_id=self.products['table'].id,
+        ))
+        
+        result = line._assistant_attributes()
+
+        self.assertSetEqual(frozenset(result.mapped('name')), frozenset(['TEST legs', 'TEST wood']))
+
+        
+    def test_blank_attributes(self):
+        """_assistant_attributes() yields empty set if template not set.
+        """
+        line = self.env['sale.order.line'].create(dict(
+            order_id=self.orders['FIRST'].id,
+            name='NOT NULL',
+        ))
+
+        result = line._assistant_attributes()
+
+        self.assertEqual(result, self.env['product.attribute'])
+
+
 
 class ValidationTests(AssistantTestCommon):
     """Test validation of variant choice assistant models.
