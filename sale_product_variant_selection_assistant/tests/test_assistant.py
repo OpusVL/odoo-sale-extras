@@ -53,7 +53,7 @@ class ValidationTests(common.TransactionCase):
         self.attributes['legs'] = ProductAttribute.create(dict(name='TEST Legs'))
         self.attr_values['legs'] = {}
         for name in ['Pedestal', 'Four Straight', 'Three Straight']:
-            self.attr_values[name] = ProductAttributeValue.create(dict(name=name, attribute_id=self.attributes['legs'].id))
+            self.attr_values['legs'][name] = ProductAttributeValue.create(dict(name=name, attribute_id=self.attributes['legs'].id))
         self.products['table'] = ProductTemplate.create(dict(
             name='TEST Table',
             attribute_line_ids=[
@@ -73,12 +73,16 @@ class ValidationTests(common.TransactionCase):
         ))
         #import pdb ; pdb.set_trace()
 
-    def test_cheese_with_pedestal_legs(self):
-        with self.assertRaisesRegexp(ValidationError, r"Attribute line must match product template"):
+    def test_cheese_with_legs_option(self):
+        with self.assertRaisesRegexp(ValidationError, r"Attribute must match product template"):
             cheese = self.products['cheese']
             self.orders['FIRST'].write(dict(
                 order_line=[(0, False, dict(
                     product_id=cheese.product_variant_ids[0].id,
+                    variant_assistant_product_template_id=cheese.id,
+                    variant_assistant_attribute_choice_ids=[
+                        (0, False, dict(attribute_id=self.attributes['legs'].id)),
+                    ],
                 ))],
             ))
 

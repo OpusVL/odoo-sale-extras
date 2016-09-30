@@ -21,6 +21,7 @@
 ##############################################################################
 
 from openerp import models, fields, api
+from openerp.exceptions import ValidationError
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
@@ -49,15 +50,13 @@ class SaleOrderLineAssistantAttributeChoice(models.Model):
     product_template_id = fields.Many2one(
         string='Product Template',
         invisible=True,
+        readonly=True,
         related='sale_order_line_id.variant_assistant_product_template_id',
     )
     attribute_id = fields.Many2one(
         string='Attribute',
         comodel_name='product.attribute',
-    )
-    attribute_line_id = fields.Many2one(
-        string='Attribute Line',
-        comodel_name='product.attribute.line',
+        required=True,
     )
     value_id = fields.Many2one(
         string='Value',
@@ -65,13 +64,12 @@ class SaleOrderLineAssistantAttributeChoice(models.Model):
     )
 
     @api.one
-    @api.constrains('product_template_id', 'attribute_id', 'attribute_line_id', 'value_id')
+    @api.constrains('product_template_id', 'attribute_id')
     def _check_attributes(self):
-        if self.attribute_line_id.product_tmpl_id != self.product_template_id:
-            raise ValidationError('Attribute line must match product template')
-        if self.attribute_line_id.attribute_id != self.attribute_id:
-            raise ValidationError('Attribute line must match attribute')
-        if self.value_id.attribute_id != self.attribute_id:
-            raise ValidationError('Attribute value must match attribute')
+        if self.attribute_id not in self.product_template_id.attribute_line_ids.mapped('attribute_id'):
+            raise ValidationError('Attribute must match product template')
+
+
+
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
