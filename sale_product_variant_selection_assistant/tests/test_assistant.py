@@ -80,6 +80,8 @@ class AssistantTestCommon(common.TransactionCase):
 
 class ValidationTests(AssistantTestCommon):
     """Test validation of variant choice assistant models.
+
+    The validation is there to help catch bugs - onupdate methods will be dealing with this.
     """
     at_install = False
     post_install = True
