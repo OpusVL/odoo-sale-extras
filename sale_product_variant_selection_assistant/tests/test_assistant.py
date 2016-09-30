@@ -81,7 +81,7 @@ class ValidationTests(common.TransactionCase):
             cheese = self.products['cheese']
             self.orders['FIRST'].write(dict(
                 order_line=[(0, False, dict(
-                    product_id=cheese.product_variant_ids[0].id,
+                    name='NOT NULL',
                     variant_assistant_product_template_id=cheese.id,
                     variant_assistant_attribute_choice_ids=[
                         (0, False, dict(attribute_id=self.attributes['legs'].id)),
@@ -96,7 +96,7 @@ class ValidationTests(common.TransactionCase):
             mature = self.attr_values['maturity']['Mature']
             self.orders['FIRST'].write(dict(
                 order_line=[(0, False, dict(
-                    product_id=table.product_variant_ids[0].id,
+                    name='NOT NULL',
                     variant_assistant_product_template_id=table.id,
                     variant_assistant_attribute_choice_ids=[
                         (0, False, dict(attribute_id=legs.id,
