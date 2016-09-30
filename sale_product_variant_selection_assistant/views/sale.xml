@@ -11,7 +11,8 @@
                     <group>
                         <group>
                             <field name="variant_assistant_product_template_id"/>
-                            <field name="variant_assistant_attribute_choice_ids">
+                            <field name="variant_assistant_attribute_choice_ids"
+                                   attrs="{'invisible': [('variant_assistant_product_template_id', '=', False)]}">
                                 <tree editable="bottom">
                                     <field name="attribute_id"/>
                                     <field name="value_id"/>
