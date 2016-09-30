@@ -70,6 +70,8 @@ class SaleOrderLineAssistantAttributeChoice(models.Model):
             raise ValidationError('Attribute must match product template')
         if self.value_id.attribute_id != self.attribute_id:
             raise ValidationError('Value must match attribute')
+        if self.value_id not in self.product_template_id.attribute_line_ids.mapped('value_ids'):
+            raise ValidationError("Value must match product")
 
 
 

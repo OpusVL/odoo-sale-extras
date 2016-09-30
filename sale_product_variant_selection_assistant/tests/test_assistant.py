@@ -57,6 +57,14 @@ class AssistantTestCommon(common.TransactionCase):
         ))
         self.products['cheese'] = ProductTemplate.create(dict(
             name='Cheese',
+            attribute_line_ids=[
+                (0, False, dict(
+                    attribute_id=self.attributes['maturity'].id,
+                    value_ids=[
+                        (6, False, [self.attr_values['maturity'][n].id for n in ['Mature', 'Extra Mature']]),
+                    ]
+                ))
+            ],
         ))
         self.orders['FIRST'] = SaleOrder.create(dict(
             partner_id = self.partners['acme'].id,
@@ -103,6 +111,25 @@ class ValidationTests(AssistantTestCommon):
                                         value_id=mature.id)),
                     ],
                 ))],
+            ))
+
+    def test_mild_cheese(self):
+        """Picking mild cheese raises ValidationError.
+
+        This is because Mild, although a valid Maturity, is not valid for this cheese.
+        """
+        with self.assertRaisesRegexp(ValidationError, r"Value must match product"):
+            cheese = self.products['cheese']
+            maturity = self.attributes['maturity']
+            mild = self.attr_values['maturity']['Mild']
+            self.orders['FIRST'].write(dict(
+                order_line=[(0, False, dict(
+                    name='NOT NULL',
+                    variant_assistant_product_template_id=cheese.id,
+                    variant_assistant_attribute_choice_ids=[
+                        (0, False, dict(attribute_id=maturity.id, value_id=mild.id)),
+                    ],
+                ))]
             ))
 
     def test_assistant_is_optional(self):
