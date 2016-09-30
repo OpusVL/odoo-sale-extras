@@ -64,10 +64,12 @@ class SaleOrderLineAssistantAttributeChoice(models.Model):
     )
 
     @api.one
-    @api.constrains('product_template_id', 'attribute_id')
+    @api.constrains('product_template_id', 'attribute_id', 'value_id')
     def _check_attributes(self):
         if self.attribute_id not in self.product_template_id.attribute_line_ids.mapped('attribute_id'):
             raise ValidationError('Attribute must match product template')
+        if self.value_id.attribute_id != self.attribute_id:
+            raise ValidationError('Value must match attribute')
 
 
 

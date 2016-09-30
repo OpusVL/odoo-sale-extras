@@ -34,9 +34,6 @@ class ValidationTests(common.TransactionCase):
         Partner = self.env['res.partner']
         ProductTemplate = self.env['product.template']
         ProductProduct = self.env['product.product']
-        ProductAttribute = self.env['product.attribute']
-        ProductAttributeValue = self.env['product.attribute.value']
-        ProductAttributeLine = self.env['product.attribute.line']
         SaleOrder = self.env['sale.order']
         self.partners = {}
         self.products = {}
@@ -50,10 +47,8 @@ class ValidationTests(common.TransactionCase):
             customer=True,
             supplier=False,
         ))
-        self.attributes['legs'] = ProductAttribute.create(dict(name='TEST Legs'))
-        self.attr_values['legs'] = {}
-        for name in ['Pedestal', 'Four Straight', 'Three Straight']:
-            self.attr_values['legs'][name] = ProductAttributeValue.create(dict(name=name, attribute_id=self.attributes['legs'].id))
+        self.setup_add_attribute('legs', ['Pedestal', 'Four Straight', 'Three Straight'])
+        self.setup_add_attribute('maturity', ['Mild', 'Medium', 'Mature', 'Extra Mature'])
         self.products['table'] = ProductTemplate.create(dict(
             name='TEST Table',
             attribute_line_ids=[
@@ -73,6 +68,14 @@ class ValidationTests(common.TransactionCase):
         ))
         #import pdb ; pdb.set_trace()
 
+    def setup_add_attribute(self, name, value_names):
+        ProductAttribute = self.env['product.attribute']
+        ProductAttributeValue = self.env['product.attribute.value']
+        self.attributes[name] = attr = ProductAttribute.create(dict(name='TEST '+name))
+        self.attr_values[name] = values = {}
+        for val in value_names:
+            values[val] = ProductAttributeValue.create(dict(name=val, attribute_id=attr.id))
+
     def test_cheese_with_legs_option(self):
         with self.assertRaisesRegexp(ValidationError, r"Attribute must match product template"):
             cheese = self.products['cheese']
@@ -82,6 +85,22 @@ class ValidationTests(common.TransactionCase):
                     variant_assistant_product_template_id=cheese.id,
                     variant_assistant_attribute_choice_ids=[
                         (0, False, dict(attribute_id=self.attributes['legs'].id)),
+                    ],
+                ))],
+            ))
+
+    def test_table_with_mature_legs(self):
+        with self.assertRaisesRegexp(ValidationError, r"Value must match attribute"):
+            table = self.products['table']
+            legs = self.attributes['legs']
+            mature = self.attr_values['maturity']['Mature']
+            self.orders['FIRST'].write(dict(
+                order_line=[(0, False, dict(
+                    product_id=table.product_variant_ids[0].id,
+                    variant_assistant_product_template_id=table.id,
+                    variant_assistant_attribute_choice_ids=[
+                        (0, False, dict(attribute_id=legs.id,
+                                        value_id=mature.id)),
                     ],
                 ))],
             ))
