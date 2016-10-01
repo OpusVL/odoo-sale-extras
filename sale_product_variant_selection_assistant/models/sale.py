@@ -71,10 +71,10 @@ class SaleOrderLineAssistantAttributeChoice(models.Model):
         comodel_name='product.attribute',
         required=True,
     )
+
     value_id = fields.Many2one(
         string='Value',
         comodel_name='product.attribute.value',
-        domain="[('attribute_id', '=', attribute_id), ('id', 'in', product_template_id.attribute_line_ids.value_ids)]",
     )
 
     @api.one
