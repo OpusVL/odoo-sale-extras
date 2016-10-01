@@ -73,7 +73,7 @@ class SaleOrderLine(models.Model):
 
     
     @api.onchange('variant_assistant_product_template_id')
-    def _onchange_product_template_id(self):
+    def _onchange_variant_assistant_product_template_id(self):
         changes = [(2, i, False) for i in self.variant_assistant_attribute_choice_ids.ids]
         attrs = self._assistant_attributes()
         for attr in attrs:
