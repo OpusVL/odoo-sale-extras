@@ -89,7 +89,7 @@ class AssistantTestCommon(common.TransactionCase):
 
 
 
-class AvailabelValuesTests(AssistantTestCommon):
+class AvailableValuesTests(AssistantTestCommon):
     """Test the available values method: _assistant_available_values()
     """
     at_install = False
