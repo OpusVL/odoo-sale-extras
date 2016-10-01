@@ -46,6 +46,16 @@ Customer-specific products.
 Adds to the Product form's Sale tab a tickbox 'Is customer specific', which if ticked will only allow
 the product to be added to sale orders for specific customers, listed in the 'Allowed customers' field.
 
+# sale\_product\_variant\_selection\_assistant
+
+Adds extra options to the Order Line form which is accessed from the Sale Order form.
+
+Fill in the Product Template option and you will be presented with a table of attributes that are applicable to
+that product.
+
+Fill in all of the attributes, and click out of the table, and the Product field will be filled in for you
+assuming you have selected a set of attribute values that uniquely identify a variant.
+
 # Copyright and License
 
 Copyright (C) 2016 OpusVL
