@@ -89,9 +89,50 @@ class AssistantTestCommon(common.TransactionCase):
 
 
 
+class AvailabelValuesTests(AssistantTestCommon):
+    """Test the available values method: _assistant_available_values()
+    """
+    at_install = False
+    post_install = True
+
+    def create_line_with_template(self, order_name, template_name):
+        order = self.orders[order_name]
+        return self.env['sale.order.line'].create(dict(
+            order_id=order.id,
+            name='NOT NULL',
+            variant_assistant_product_template_id=self.products[template_name].id,
+        ))
+
+    def test_create_line_with_template(self):
+        result = self.create_line_with_template('FIRST', 'cheese')
+
+        self.assertEqual(result.order_id, self.orders['FIRST'])
+        self.assertEqual(result.variant_assistant_product_template_id, self.products['cheese'])
+        
+
+    def test_cheese_maturities(self):
+        """cheese._assistant_available_values(maturity) -> Mature, Extra Mature
+        """
+        line = self.create_line_with_template('FIRST', 'cheese')
+        
+        result = line._assistant_available_values(self.attributes['maturity'])
+
+        self.assertTrue(result)
+        self.assertSetEqual(frozenset(result.mapped('name')), frozenset(['Mature', 'Extra Mature']))
+
+        
+    def test_cheese_legs(self):
+        """cheese._assistant_available_values(legs) empty
+        """
+        line = self.create_line_with_template('FIRST', 'cheese')
+
+        result = line._assistant_available_values(self.attributes['legs'])
+
+        self.assertFalse(result, 'returned recordset should be empty')
+    
 
 class AvailableAttributesTests(AssistantTestCommon):
-    """Test the available attributes methohd: _assistant_attributes()
+    """Test the available attributes method: _assistant_attributes()
     """
     at_install = False
     post_install = True
