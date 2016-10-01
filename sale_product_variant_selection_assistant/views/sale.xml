@@ -14,7 +14,7 @@
                             <field name="variant_assistant_attribute_choice_ids"
                                    attrs="{'invisible': [('variant_assistant_product_template_id', '=', False)]}">
                                 <tree editable="bottom">
-                                    <field name="attribute_id"/>
+                                    <field name="attribute_id" domain="[('value_ids.product_ids.product_tmpl_id', '=', parent.variant_assistant_product_template_id)]"/>
                                     <field name="value_id" domain="[('attribute_id', '=', attribute_id), ('product_ids.product_tmpl_id', '=', parent.variant_assistant_product_template_id)]"/>
                                 </tree>
                             </field>
