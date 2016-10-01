@@ -97,6 +97,16 @@ class AssistantTestCommon(common.TransactionCase):
         ))
 
 
+    def _select_attribute(self, line, attr_name, value_name):
+        line.write({
+            'variant_assistant_attribute_choice_ids': [(0, False, {
+                'attribute_id': self.attributes[attr_name].id,
+                'value_id': self.attr_values[attr_name][value_name].id,
+            })],
+        })
+
+
+        
 class TestHelperTests(AssistantTestCommon):
     at_install = False
     post_install = True
@@ -106,6 +116,7 @@ class TestHelperTests(AssistantTestCommon):
 
         self.assertEqual(result.order_id, self.orders['FIRST'])
         self.assertEqual(result.variant_assistant_product_template_id, self.products['cheese'])
+        self.assertEqual(len(result.variant_assistant_attribute_choice_ids), 0)
 
 
     def test_create_line_without_template(self):
@@ -113,6 +124,66 @@ class TestHelperTests(AssistantTestCommon):
 
         self.assertEqual(result.order_id, self.orders['FIRST'])
         self.assertFalse(result.variant_assistant_product_template_id)
+
+        
+    def test_select_attribute_from_empty(self):
+        line = self.create_line(order_name='FIRST', template_name='table')
+        self._select_attribute(line, 'legs', 'Pedestal')
+
+        result = line.variant_assistant_attribute_choice_ids
+        
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].attribute_id, self.attributes['legs'])
+        self.assertEqual(result[0].value_id, self.attr_values['legs']['Pedestal'])
+        
+
+
+
+class ResolverTests(AssistantTestCommon):
+    """Test the logic that resolves the choices to a unique variant.
+    """
+    at_install = False
+    post_install = True
+
+    def test_nothing_with_no_template_selected(self):
+        """Resolve to False if no template is selected.
+        """
+        line = self.create_line(order_name='FIRST', template_name=False)
+
+        result = line._assistant_resolve_variant()
+
+        self.assertFalse(result)
+
+
+    def test_nothing_with_no_values_selected(self):
+        line = self.create_line(order_name='FIRST', template_name='table')
+
+        result = line._assistant_resolve_variant()
+
+        self.assertFalse(result)
+
+
+    def test_nothing_with_incomplete_values_selected(self):
+        """Incomplete form produces falsey.
+        """
+        line = self.create_line(order_name='FIRST', template_name='table')
+        self._select_attribute(line, 'legs', 'Pedestal')
+
+        result = line._assistant_resolve_variant()
+
+        self.assertFalse(result)
+
+        
+    def test_single_variant_with_complete_set_of_values(self):
+        line = self.create_line(order_name='FIRST', template_name='table')
+        self._select_attribute(line, 'legs', 'Pedestal')
+        self._select_attribute(line, 'wood', 'Teak')
+
+        result = line._assistant_resolve_variant()
+
+        self.assertEqual(len(result), 1, 'Should select exactly one variant')
+        self.assertSetEqual(frozenset(result.attribute_value_ids.mapped('name')), frozenset(['Teak', 'Pedestal']),
+                            "Chosen variant has values Legs and Pedestal")
 
         
 
@@ -202,17 +273,8 @@ class AvailableAttributesTests(AssistantTestCommon):
         result = line._assistant_attributes()
 
         self.assertEqual(result, self.env['product.attribute'])
-
-
-class ResolverTests(AssistantTestCommon):
-    """Test the logic that resolves the choices to a unique variant.
-    """
-    at_install = False
-    post_install = True
-
-    def test_nothing_with_no_template_selected(self):
-        self.skipTest("Not yet expected")
-
+        
+        
 
 class ValidationTests(AssistantTestCommon):
     """Test validation of variant choice assistant models.

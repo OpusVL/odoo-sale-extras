@@ -51,6 +51,26 @@ class SaleOrderLine(models.Model):
         template = self.variant_assistant_product_template_id
         return attribute.value_ids.filtered(lambda v: v in template.attribute_line_ids.mapped('value_ids'))
 
+
+    def _chosen_values(self):
+        choices = self.variant_assistant_attribute_choice_ids.filtered(lambda c: c.value_id)
+        return choices.mapped('value_id')
+        
+
+    def _assistant_resolve_variant(self):
+        empty_variants = self.env['product.product']
+        template = self.variant_assistant_product_template_id
+        if not template:
+            return empty_variants
+        values = self._chosen_values()
+        domain = [('sale_ok', '=', True), ('product_tmpl_id', '=', template.id)]
+        domain.extend([('attribute_value_ids', '=', v) for v in values.ids])
+        variants = empty_variants.search(domain)
+        #variants = template.product_variant_ids.filtered(lambda v: v.attribute_value_ids >= values)
+        if len(variants) != 1:
+            return empty_variants
+        return variants
+
     
     @api.onchange('variant_assistant_product_template_id')
     def _onchange_product_template_id(self):
