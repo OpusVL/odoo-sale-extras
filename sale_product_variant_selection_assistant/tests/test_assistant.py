@@ -26,6 +26,8 @@ from openerp.exceptions import ValidationError
 
 
 class AssistantTestCommon(common.TransactionCase):
+    """Common arrangement and helpers for testing the variant assistant.
+    """
     def setUp(self):
         super(AssistantTestCommon, self).setUp()
         Partner = self.env['res.partner']
@@ -79,7 +81,18 @@ class AssistantTestCommon(common.TransactionCase):
             partner_id = self.partners['acme'].id,
         ))
 
+        
     def setup_add_attribute(self, name, value_names):
+        """Add an attribute and its values to the database.
+
+        'TEST ' is prepended to name.
+
+        The attribute object is added to self.attributes[name]
+
+        For each val_name in value_names, an attribute value is created with val_name,
+        attached to self.attributes[name], and registered under self.attr_values[name][val_name]
+        for use in tests.
+        """
         ProductAttribute = self.env['product.attribute']
         ProductAttributeValue = self.env['product.attribute.value']
         self.attributes[name] = attr = ProductAttribute.create(dict(name='TEST '+name))
@@ -89,6 +102,15 @@ class AssistantTestCommon(common.TransactionCase):
 
 
     def create_line(self, order_name, template_name=False):
+        """Naively create and return sale order line.
+
+        The line is created on the sale order self.orders[order_name].
+
+        The line's name (Description) will be filled in with 'NOT NULL'.
+
+        If template_name is provided, then variant_assistant_product_template_id
+        will also be set to self.products[template_name]
+        """
         order = self.orders[order_name]
         return self.env['sale.order.line'].create(dict(
             order_id=order.id,
@@ -98,6 +120,10 @@ class AssistantTestCommon(common.TransactionCase):
 
 
     def _select_attribute(self, line, attr_name, value_name):
+        """Select value value_name for attr_name on order line.
+
+        Attribute and value are looked up in self.attributes and self.attr_values, respectively.
+        """
         line.write({
             'variant_assistant_attribute_choice_ids': [(0, False, {
                 'attribute_id': self.attributes[attr_name].id,
@@ -108,10 +134,14 @@ class AssistantTestCommon(common.TransactionCase):
 
         
 class TestHelperTests(AssistantTestCommon):
+    """Tests helper methods defined on AssistantTestCommon.
+    """
     at_install = False
     post_install = True
     
     def test_create_line_with_template(self):
+        """create_line can produce an order line with template filled in
+        """
         result = self.create_line('FIRST', template_name='cheese')
 
         self.assertEqual(result.order_id, self.orders['FIRST'])
@@ -120,6 +150,8 @@ class TestHelperTests(AssistantTestCommon):
 
 
     def test_create_line_without_template(self):
+        """create_line can produce an order line with template omitted
+        """
         result = self.create_line('FIRST')
 
         self.assertEqual(result.order_id, self.orders['FIRST'])
@@ -127,6 +159,8 @@ class TestHelperTests(AssistantTestCommon):
 
         
     def test_select_attribute_from_empty(self):
+        """calling _select_attribute on a new line adds an attribute choice
+        """
         line = self.create_line(order_name='FIRST', template_name='table')
         self._select_attribute(line, 'legs', 'Pedestal')
 
@@ -156,6 +190,8 @@ class ResolverTests(AssistantTestCommon):
 
 
     def test_nothing_with_no_values_selected(self):
+        """Resolve to False if a template is selected but no values are.
+        """
         line = self.create_line(order_name='FIRST', template_name='table')
 
         result = line._assistant_resolve_variant()
@@ -164,7 +200,7 @@ class ResolverTests(AssistantTestCommon):
 
 
     def test_nothing_with_incomplete_values_selected(self):
-        """Incomplete form produces falsey.
+        """Incomplete choice of values returns False.
         """
         line = self.create_line(order_name='FIRST', template_name='table')
         self._select_attribute(line, 'legs', 'Pedestal')
@@ -175,6 +211,8 @@ class ResolverTests(AssistantTestCommon):
 
         
     def test_single_variant_with_complete_set_of_values(self):
+        """Selecting a value for all attributes returns a single product variant.
+        """
         line = self.create_line(order_name='FIRST', template_name='table')
         self._select_attribute(line, 'legs', 'Pedestal')
         self._select_attribute(line, 'wood', 'Teak')
@@ -222,6 +260,8 @@ class AvailableAttributesTests(AssistantTestCommon):
     post_install = True
 
     def test_assistant_clear_by_default(self):
+        """A new order line has no product template or attribute choices.
+        """
         order = self.orders['FIRST']
         
         line = self.env['sale.order.line'].create(dict(
@@ -298,6 +338,8 @@ class ValidationTests(AssistantTestCommon):
             ))
 
     def test_table_with_mature_legs(self):
+        """Raises ValidationError if table with mature legs is selected.
+        """
         with self.assertRaisesRegexp(ValidationError, r"Value must match attribute"):
             table = self.products['table']
             legs = self.attributes['legs']
