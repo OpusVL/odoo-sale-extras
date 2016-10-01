@@ -40,15 +40,18 @@ class SaleOrderLine(models.Model):
         help='Now select the attribute values.  Once you select enough attributes to uniquely identify the product, it will be entered in the Product field',
     )
 
+    
     @api.returns('product.attribute')
     def _assistant_attributes(self):
         return self.variant_assistant_product_template_id.attribute_line_ids.mapped('attribute_id')
 
+    
     @api.returns('product.attribute.value')
     def _assistant_available_values(self, attribute):
         template = self.variant_assistant_product_template_id
         return attribute.value_ids.filtered(lambda v: v in template.attribute_line_ids.mapped('value_ids'))
 
+    
     @api.onchange('variant_assistant_product_template_id')
     def _onchange_product_template_id(self):
         changes = [(2, i, False) for i in self.variant_assistant_attribute_choice_ids.ids]
