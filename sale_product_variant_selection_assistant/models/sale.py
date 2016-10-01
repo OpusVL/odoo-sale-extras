@@ -56,8 +56,12 @@ class SaleOrderLine(models.Model):
     def _onchange_product_template_id(self):
         changes = [(2, i, False) for i in self.variant_assistant_attribute_choice_ids.ids]
         attrs = self._assistant_attributes()
-        if attrs:
-             changes.extend((0, False, {"attribute_id": i}) for i in attrs.ids)
+        for attr in attrs:
+            choice_data = {"attribute_id": attr.id}
+            options = self._assistant_available_values(attr)
+            if len(options) == 1:
+                choice_data['value_id'] = options.id
+            changes.append((0, False, choice_data))
         self.update({'variant_assistant_attribute_choice_ids': changes})
 
 
