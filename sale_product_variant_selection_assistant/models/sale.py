@@ -84,6 +84,10 @@ class SaleOrderLine(models.Model):
             changes.append((0, False, choice_data))
         self.update({'variant_assistant_attribute_choice_ids': changes})
 
+    @api.onchange('variant_assistant_attribute_choice_ids')
+    def _onchange_variant_assistant_attribute_choice_ids(self):
+        self.product_id = self._assistant_resolve_variant()
+
 
 
 class SaleOrderLineAssistantAttributeChoice(models.Model):
