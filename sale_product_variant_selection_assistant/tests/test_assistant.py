@@ -88,6 +88,33 @@ class AssistantTestCommon(common.TransactionCase):
             values[val] = ProductAttributeValue.create(dict(name=val, attribute_id=attr.id))
 
 
+    def create_line(self, order_name, template_name=False):
+        order = self.orders[order_name]
+        return self.env['sale.order.line'].create(dict(
+            order_id=order.id,
+            name='NOT NULL',
+            variant_assistant_product_template_id=template_name and self.products[template_name].id,
+        ))
+
+
+class TestHelperTests(AssistantTestCommon):
+    at_install = False
+    post_install = True
+    
+    def test_create_line_with_template(self):
+        result = self.create_line('FIRST', template_name='cheese')
+
+        self.assertEqual(result.order_id, self.orders['FIRST'])
+        self.assertEqual(result.variant_assistant_product_template_id, self.products['cheese'])
+
+
+    def test_create_line_without_template(self):
+        result = self.create_line('FIRST')
+
+        self.assertEqual(result.order_id, self.orders['FIRST'])
+        self.assertFalse(result.variant_assistant_product_template_id)
+
+        
 
 class AvailableValuesTests(AssistantTestCommon):
     """Test the available values method: _assistant_available_values()
@@ -95,25 +122,11 @@ class AvailableValuesTests(AssistantTestCommon):
     at_install = False
     post_install = True
 
-    def create_line_with_template(self, order_name, template_name):
-        order = self.orders[order_name]
-        return self.env['sale.order.line'].create(dict(
-            order_id=order.id,
-            name='NOT NULL',
-            variant_assistant_product_template_id=self.products[template_name].id,
-        ))
-
-    def test_create_line_with_template(self):
-        result = self.create_line_with_template('FIRST', 'cheese')
-
-        self.assertEqual(result.order_id, self.orders['FIRST'])
-        self.assertEqual(result.variant_assistant_product_template_id, self.products['cheese'])
-        
 
     def test_cheese_maturities(self):
         """cheese._assistant_available_values(maturity) -> Mature, Extra Mature
         """
-        line = self.create_line_with_template('FIRST', 'cheese')
+        line = self.create_line('FIRST', 'cheese')
         
         result = line._assistant_available_values(self.attributes['maturity'])
 
@@ -124,7 +137,7 @@ class AvailableValuesTests(AssistantTestCommon):
     def test_cheese_legs(self):
         """cheese._assistant_available_values(legs) empty
         """
-        line = self.create_line_with_template('FIRST', 'cheese')
+        line = self.create_line('FIRST', 'cheese')
 
         result = line._assistant_available_values(self.attributes['legs'])
 
@@ -190,6 +203,15 @@ class AvailableAttributesTests(AssistantTestCommon):
 
         self.assertEqual(result, self.env['product.attribute'])
 
+
+class ResolverTests(AssistantTestCommon):
+    """Test the logic that resolves the choices to a unique variant.
+    """
+    at_install = False
+    post_install = True
+
+    def test_nothing_with_no_template_selected(self):
+        self.skipTest("Not yet expected")
 
 
 class ValidationTests(AssistantTestCommon):
