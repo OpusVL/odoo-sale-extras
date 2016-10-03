@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+attribute_choice_salesman,Salesman access to Attribute Choice,model_sale_order_line_assistant_attribute_choice,base.group_sale_salesman,1,1,1,1

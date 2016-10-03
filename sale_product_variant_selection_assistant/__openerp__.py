@@ -30,7 +30,8 @@
     
     'category': 'Sales',
     
-    'description': """Adds fields to Sale Order Line form allowing easier selection of product variants based on product attributes,
+    'description': """Adds fields to Sale Order Line form allowing easier selection of product variants based on product attributes.
+    In order for a user to use this features, they must be in "Sales / Own Leads" and "Technical Settings / Properties on lines"
 """,
     'images': [
     ],
@@ -39,6 +40,7 @@
         'product',
     ],
     'data': [
+        'security/ir.model.access.csv',
         'views/sale.xml',
     ],
     'demo': [
