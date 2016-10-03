@@ -29,7 +29,7 @@ class CustomerSpecificCommonMixin(object):
         """
         self.ensure_one()
         if not self.is_customer_specific:
-            return False
+            return True
         if isinstance(customer, (int, long)):
             customer = self.browse(customer)
         return customer in self.specific_customer_ids
