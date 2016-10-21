@@ -40,6 +40,7 @@
     ],
     'data': [
         'views/product.xml',
+        'views/sale.xml',
     ],
     'demo': [
     ],

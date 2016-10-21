@@ -23,6 +23,44 @@
 from openerp import models, fields, api, exceptions
 from openerp.tools.translate import _
 
+
+class SaleOrder(models.Model):
+    _inherit = 'sale.order'
+
+    def onchange_partner_id(self, cr, uid, ids, partner_id, order_lines=False, context=None):
+        res = super(SaleOrder, self).onchange_partner_id(cr, uid, ids, partner_id, context=context)
+        if not order_lines or not partner_id:
+            return res
+
+        # User changes customer during initial creation of sale order,
+        # having already added some products that can be sold to the original customer but
+        # cannot be sold to the new one
+        creations = [details for (cmd, _x, details) in order_lines if cmd == 0]
+        product_ids = [p['product_id'] for p in creations if p['product_id']]
+
+        # TODO handle edits to existing sale orders of customer without changing lines
+        #      this will most likely add to product_ids
+        # TODO handle editing lines containing products that cannot be sold to the customer
+        #      this will most likely add to product_ids
+        
+        if not product_ids:
+            return res
+
+        # We now have the list of products that are wanted, lets fetch them and see if any of them
+        # can't be sold to the new customer.
+        products = self.pool['product.product'].browse(cr, uid, product_ids, context=context)
+        partner = self.pool['res.partner'].browse(cr, uid, partner_id, context=context)
+        disallowed_products = [p.display_name for p in products if not p.may_be_sold_to_customer(partner)]
+        cust_name = partner.display_name
+        if disallowed_products:
+            product_strings = ' ; '.join(sorted(disallowed_products))
+            raise exceptions.ValidationError(_("The following products cannot be sold to {cust_name}: {products}").format(
+                products=product_strings,
+                cust_name=cust_name,
+            ))
+        return res
+        
+
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
