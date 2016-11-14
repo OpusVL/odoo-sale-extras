@@ -38,10 +38,14 @@ class SaleOrder(models.Model):
         creations = [details for (cmd, _x, details) in order_lines if cmd == 0]
         product_ids = [p['product_id'] for p in creations if p['product_id']]
 
-        # TODO handle edits to existing sale orders of customer without changing lines
-        #      this will most likely add to product_ids
-        # TODO handle editing lines containing products that cannot be sold to the customer
-        #      this will most likely add to product_ids
+        # get products that will be saved with edit to existing sale order
+        kept_line_ids = set()
+        for so_ids in [c[2] for c in order_lines if c[0] == 6]:
+            kept_line_ids.update(so_ids)
+
+        kept_lines = self.pool['sale.order.line'].browse(cr, uid, kept_line_ids, context=context)
+        kept_product_ids = kept_lines.mapped('product_id.id')
+        product_ids.extend(kept_product_ids)
         
         if not product_ids:
             return res
