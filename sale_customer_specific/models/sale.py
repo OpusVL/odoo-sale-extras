@@ -32,13 +32,11 @@ class SaleOrder(models.Model):
         if not order_lines or not partner_id:
             return res
 
-        # User changes customer during initial creation of sale order,
-        # having already added some products that can be sold to the original customer but
-        # cannot be sold to the new one
+        # Get product ids for order lines being created
         creations = [details for (cmd, _x, details) in order_lines if cmd == 0]
         product_ids = [p['product_id'] for p in creations if p['product_id']]
 
-        # get products that will be saved with edit to existing sale order
+        # get product ids for order lines being kept (unchanged or edited)
         kept_line_ids = set()
         for so_ids in [c[2] for c in order_lines if c[0] == 6]:
             kept_line_ids.update(so_ids)
