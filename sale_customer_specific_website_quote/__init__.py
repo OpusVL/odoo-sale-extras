@@ -2,7 +2,7 @@
 
 ##############################################################################
 #
-# Customer-specific products - optional products integration
+# Customer-specific products - suggested products integration
 # Copyright (C) 2016 OpusVL (<http://opusvl.com/>)
 #
 # This program is free software: you can redistribute it and/or modify

@@ -2,7 +2,7 @@
 
 ##############################################################################
 #
-# Customer-specific products - optional products integration
+# Customer-specific products - suggested products integration
 # Copyright (C) 2016 OpusVL (<http://opusvl.com/>)
 #
 # This program is free software: you can redistribute it and/or modify
@@ -22,15 +22,15 @@
 
 
 {
-    'name': 'Customer-specific products - optional products integration',
+    'name': 'Customer-specific products - suggested products integration',
     'version': '0.1',
     'author': 'OpusVL',
     'website': 'http://opusvl.com/',
-    'summary': 'Apply customer-specific products to optional products list',
+    'summary': 'Apply customer-specific product rules to suggested products list',
     
     'category': 'Sales',
     
-    'description': """Apply customer-specific products to optional products list,
+    'description': """Apply customer-specific product rules to suggested products list.
 """,
     'images': [
     ],
