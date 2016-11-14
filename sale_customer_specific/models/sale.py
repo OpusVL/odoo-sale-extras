@@ -50,19 +50,29 @@ class SaleOrder(models.Model):
         if not product_ids:
             return res
 
-        # We now have the list of products that are wanted, lets fetch them and see if any of them
-        # can't be sold to the new customer.
+        # Do the validation
         products = self.pool['product.product'].browse(cr, uid, product_ids, context=context)
         partner = self.pool['res.partner'].browse(cr, uid, partner_id, context=context)
+        self._error_if_not_allowed_to_buy_any_of(partner, products)
+        return res
+
+
+    @api.constrains('partner_id', 'order_line.product_id')
+    def _check_order_lines_and_partner(self):
+        self._error_if_not_allowed_to_buy_any_of(self.partner_id, self.mapped('order_line.product_id'))
+
+
+    def _error_if_not_allowed_to_buy_any_of(self, partner, products):
         disallowed_products = [p.display_name for p in products if not p.may_be_sold_to_customer(partner)]
         cust_name = partner.display_name
         if disallowed_products:
             product_strings = ' ; '.join(sorted(disallowed_products))
-            raise exceptions.ValidationError(_("The following products cannot be sold to {cust_name}: {products}").format(
+            raise exceptions.ValidationError(_("The following {product_noun} cannot be sold to {cust_name}: {products}").format(
                 products=product_strings,
                 cust_name=cust_name,
+                product_noun='product' if len(disallowed_products) == 1 else 'products',
             ))
-        return res
+        
         
 
 class SaleOrderLine(models.Model):
