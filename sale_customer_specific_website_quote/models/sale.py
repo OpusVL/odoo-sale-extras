@@ -29,4 +29,18 @@ class SaleOrder(models.Model):
     def _check_options_buyable_by_customer(self):
         self._error_if_not_allowed_to_buy_any_of(self.partner_id, self.mapped('options.product_id'))
 
+
+
+class SaleOrderOption(models.Model):
+    _inherit = 'sale.order.option'
+
+    order_partner_id = fields.Many2one(
+        related=['order_id', 'partner_id'],
+        comodel_name='res.partner',
+    )
+
+    @api.onchange('product_id', 'order_partner_id')
+    def _check_option_buyable_by_customer(self):
+        self.env['sale.order.line']._error_if_not_allowed_to_buy(self.order_partner_id, self.product_id)
+        
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
