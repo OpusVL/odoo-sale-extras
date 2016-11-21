@@ -82,7 +82,7 @@ class SaleOrderLine(models.Model):
             return empty_variants
         if not variants.active:
             raise exceptions.Warning(
-                "The product [{}] matching the above attributes is inactive".format(variants.name))
+                "The product [{}] matching the above attributes is inactive".format(variants.display_name))
         return variants
 
     
