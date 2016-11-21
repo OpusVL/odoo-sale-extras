@@ -21,6 +21,7 @@
 ##############################################################################
 
 from openerp import models, fields, api
+from openerp import exceptions
 from openerp.exceptions import ValidationError
 
 class SaleOrderLine(models.Model):
@@ -73,10 +74,15 @@ class SaleOrderLine(models.Model):
         values = self._chosen_values()
         domain = [('sale_ok', '=', True), ('product_tmpl_id', '=', template.id)]
         domain.extend([('attribute_value_ids', '=', v) for v in values.ids])
+        # Interested in inactive products too, so can detect error condition
+        domain.extend(['|', ('active', '=', True), ('active', '=', False)])
         variants = empty_variants.search(domain)
         #variants = template.product_variant_ids.filtered(lambda v: v.attribute_value_ids >= values)
         if len(variants) != 1:
             return empty_variants
+        if not variants.active:
+            raise exceptions.Warning(
+                "The product [{}] matching the above attributes is inactive".format(variants.name))
         return variants
 
     
