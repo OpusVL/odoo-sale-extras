@@ -99,6 +99,9 @@ class SaleOrderLine(models.Model):
                 choice_data['value_id'] = options.id
             changes.append((0, False, choice_data))
         self.update({'variant_assistant_attribute_choice_ids': changes})
+        variant = self._assistant_resolve_variant()
+        if variant:
+            self.product_id = variant
 
 
     @api.onchange('variant_assistant_attribute_choice_ids')
