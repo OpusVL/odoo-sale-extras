@@ -113,6 +113,14 @@ class SaleOrderLine(models.Model):
         if not self.product_id:
             self.name = False
 
+    @api.constrains('variant_assistant_attribute_choice_ids')
+    def _check_variant_assistant_attribute_choice_ids(self):
+        try:
+            self._assistant_resolve_variant()
+        except exceptions.Warning as exc:
+            if not self.product_id:
+                # Usually means selection wizard was incomplete
+                raise ValidationError(u"Product selection assistant error on line [{}]: {}".format(self.name, unicode(exc)))
 
 
 class SaleOrderLineAssistantAttributeChoice(models.Model):
