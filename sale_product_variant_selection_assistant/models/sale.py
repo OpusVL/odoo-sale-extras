@@ -99,6 +99,7 @@ class SaleOrderLine(models.Model):
                 choice_data['value_id'] = options.id
             changes.append((0, False, choice_data))
         self.update({'variant_assistant_attribute_choice_ids': changes})
+        self.name = False
         variant = self._assistant_resolve_variant()
         if variant:
             self.product_id = variant
@@ -109,6 +110,8 @@ class SaleOrderLine(models.Model):
         """Resolve the variant when updates to choices have been completed.
         """
         self.product_id = self._assistant_resolve_variant()
+        if not self.product_id:
+            self.name = False
 
 
 
