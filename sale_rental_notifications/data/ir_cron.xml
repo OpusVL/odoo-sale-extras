@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="start_notification_cron" model="ir.cron">
+            <field name="name">Send Rental Start Notifications</field>
+            <field name="interval_number" eval="1"/>
+            <field name="interval_type">days</field>
+            <!-- Default to midnight tomorrow -->
+            <field name="nextcall" eval="(datetime.utcnow() + timedelta(days=1)).strftime('%Y-%m-%d')"/>
+            <field name="numbercall" eval="1"/>
+            <field name="doall" eval="False"/>
+            <field name="model">res.partner</field>
+            <field name="function">send_start_notifications</field>
+        </record>
+    </data>
+</openerp>

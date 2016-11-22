@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="start_notification_email_template" model="email.template">
+            <field name="name">Rental Start Notification</field>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="email_from"><![CDATA[${user.partner_id.name|safe} <${user.partner_id.email | safe}>]]></field>
+            <field name="subject"><![CDATA[Your rentals beginning today ${format_tz(ctx['rental_date'], format="%d/%m/%Y").split()[0] | safe}]]></field>
+            <field name="partner_to">${object.id}</field>
+            <field name="body_html"><![CDATA[
+<p>
+Hello ${object.name},
+</p>
+
+<p>
+You have rentals beginning today (${format_tz(ctx['rental_date'], format="%d/%m/%Y").split()[0] | safe}):
+</p>
+<table>
+<thead>
+  <th>
+  Description
+  </th>
+  <th>
+  Sales Order Number
+  </th>
+</thead>
+<tbody>
+%for rental in ctx['rental_lines']
+  <tr>
+    <td>${rental.name}</td>
+    <td>${rental.order_id.name}</td>
+  </tr>
+%endfor
+</tbody>
+</table>
+
+<p>
+${object.company_id.name or user.company_id.name}
+</p>
+            ]]>
+            </field>
+        </record>
+    </data>
+</openerp>
