@@ -27,7 +27,7 @@ from openerp.tools.translate import _
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
-    @api.constrains('partner_id', 'order_line.product_id')
+    @api.constrains('partner_id', 'order_line')
     def _check_order_lines_and_partner(self):
         self._error_if_not_allowed_to_buy_any_of(self.partner_id, self.mapped('order_line.product_id'))
 
