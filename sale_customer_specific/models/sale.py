@@ -27,34 +27,6 @@ from openerp.tools.translate import _
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
-    def onchange_partner_id(self, cr, uid, ids, partner_id, order_lines=False, context=None):
-        res = super(SaleOrder, self).onchange_partner_id(cr, uid, ids, partner_id, context=context)
-        if not order_lines or not partner_id:
-            return res
-
-        # Get product ids for order lines being created
-        creations = [details for (cmd, _x, details) in order_lines if cmd == 0]
-        product_ids = [p['product_id'] for p in creations if p['product_id']]
-
-        # get product ids for order lines being kept (unchanged or edited)
-        kept_line_ids = set()
-        for so_ids in [c[2] for c in order_lines if c[0] == 6]:
-            kept_line_ids.update(so_ids)
-
-        kept_lines = self.pool['sale.order.line'].browse(cr, uid, kept_line_ids, context=context)
-        kept_product_ids = kept_lines.mapped('product_id.id')
-        product_ids.extend(kept_product_ids)
-        
-        if not product_ids:
-            return res
-
-        # Do the validation
-        products = self.pool['product.product'].browse(cr, uid, product_ids, context=context)
-        partner = self.pool['res.partner'].browse(cr, uid, partner_id, context=context)
-        self._error_if_not_allowed_to_buy_any_of(partner, products)
-        return res
-
-
     @api.constrains('partner_id', 'order_line.product_id')
     def _check_order_lines_and_partner(self):
         self._error_if_not_allowed_to_buy_any_of(self.partner_id, self.mapped('order_line.product_id'))

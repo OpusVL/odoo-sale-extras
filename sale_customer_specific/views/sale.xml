@@ -7,9 +7,6 @@
             <field name="type">form</field>
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
-                <field name="partner_id" position="attributes">
-                    <attribute name="on_change">onchange_partner_id(partner_id, order_line, context)</attribute>
-                </field>
             </field>
         </record>
 
