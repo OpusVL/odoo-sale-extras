@@ -25,7 +25,7 @@ from openerp import models, fields, api
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
-    @api.constrains('partner_id', 'options.product_id')
+    @api.constrains('partner_id', 'options')
     def _check_options_buyable_by_customer(self):
         self._error_if_not_allowed_to_buy_any_of(self.partner_id, self.mapped('options.product_id'))
 
