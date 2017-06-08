@@ -42,7 +42,7 @@ class SaleOrderLine(models.Model):
         compute='_compute_subtotal_taxes',
     )
 
-    @api.multi
+    @api.one
     @api.depends('tax_id', 'price_subtotal')
     def _compute_subtotal_taxes(self):
         # Based on sale.order/_amount_all method
