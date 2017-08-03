@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- Pricelist form view -->
+        <record id="product_pricelist_item_form_view_ignore_fx" model="ir.ui.view">
+            <field name="name">product.pricelist.item.form.ignore_fx</field>
+            <field name="model">product.pricelist.item</field>
+            <field name="inherit_id" ref="product.product_pricelist_item_form_view"/>
+            <field name="arch" type="xml">
+                <field name="sequence" position="after">
+                    <field name="enable_fx_conversion"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- Pricelist tree view -->
+        <record id="product_pricelist_item_tree_view_ignore_fx" model="ir.ui.view">
+            <field name="name">product.pricelist.item.tree.ignore_fx</field>
+            <field name="model">product.pricelist.item</field>
+            <field name="inherit_id" ref="product.product_pricelist_item_tree_view"/>
+            <field name="arch" type="xml">
+                <field name="sequence" position="after">
+                    <field name="enable_fx_conversion"/>
+                </field>
+            </field>
+        </record>
+    </data>
+    </openerp>
