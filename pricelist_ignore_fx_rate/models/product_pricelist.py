@@ -34,7 +34,7 @@ class product_pricelist(osv.osv):
     # To simply remove currency rounding applied to the pricelist after calcs
     # I've only changed a few lines to add the 'if rule.enable_fx_conversion'
     # check, which runs the default currency conversion if true, and does no
-    # conversion if false. This is on lines 145 and 177
+    # conversion if false. This is on lines 145 and 180
     def _price_rule_get_multi(self, cr, uid, pricelist, products_by_qty_by_partner, context=None):
         context = context or {}
         date = context.get('date') or time.strftime('%Y-%m-%d')
@@ -155,8 +155,11 @@ class product_pricelist(osv.osv):
                         if (not partner) or (seller_id.name.id != partner):
                             continue
                         seller = seller_id
-                    if not seller and product.seller_ids:
-                        seller = product.seller_ids[0]
+                    if not seller:
+                        if pricelist.type == 'purchase':
+                            continue
+                        elif product.seller_ids:
+                            seller = product.seller_ids[0]
                     if seller:
                         qty_in_seller_uom = qty
                         seller_uom = seller.product_uom.id
@@ -205,7 +208,7 @@ class product_pricelist(osv.osv):
                         price = min(price, price_limit + price_max_margin)
 
                     rule_id = rule.id
-                break
+                    break
 
             # Final price conversion to target UoM
             price = product_uom_obj._compute_price(cr, uid, price_uom_id, price, qty_uom_id)
