@@ -42,16 +42,12 @@ class SaleOrderLine(models.Model):
         compute='_compute_subtotal_taxes',
     )
 
-    @api.depends('tax_id', 'price_subtotal')
+    @api.depends('price_subtotal', 'price_tax', 'price_total')
     def _compute_subtotal_taxes(self):
-        # Based on sale.order/_amount_all method
         for order in self:
-            cur = order.order_id.pricelist_id.currency_id
-            order.tax_on_subtotal = \
-                cur.round(self.env['sale.order']._amount_line_tax(order))
-            order.subtotal_untaxed = cur.round(order.price_subtotal)
-            order.subtotal_taxed = \
-                cur.round(order.subtotal_untaxed + order.tax_on_subtotal)
+            order.subtotal_taxed = order.price_total
+            order.subtotal_untaxed = order.price_subtotal
+            order.tax_on_subtotal = order.price_tax
 
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
