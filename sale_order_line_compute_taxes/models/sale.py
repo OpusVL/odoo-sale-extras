@@ -21,24 +21,23 @@
 ##############################################################################
 
 from openerp import models, fields, api
-import openerp.addons.decimal_precision as dp
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
 
     subtotal_taxed = fields.Float(
-        digits_compute=dp.get_precision('Product Price'),
+        digits='Product Price',
         compute='_compute_subtotal_taxes',
     )
 
     subtotal_untaxed = fields.Float(
-        digits_compute=dp.get_precision('Product Price'),
+        digits='Product Price',
         compute='_compute_subtotal_taxes',
     )
 
     tax_on_subtotal = fields.Float(
-        digits_compute=dp.get_precision('Product Price'),
+        digits='Product Price',
         compute='_compute_subtotal_taxes',
     )
 
